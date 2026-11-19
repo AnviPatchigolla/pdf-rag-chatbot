@@ -1,12 +1,12 @@
-
 import pymupdf
+from sentence_transformers import SentenceTransformer
 
 def extract_text(pdf_path):
     document = pymupdf.open(pdf_path)
     text = ""
 
     for page in document:
-        text += page.get_text()
+        text += page.get_text() + "\n"
 
     document.close()
     return text
@@ -32,9 +32,13 @@ def main():
 
     print("Total chunks:", len(chunks))
 
-    for i, chunk in enumerate(chunks):
-        print(f"\n--- Chunk {i + 1} ---")
-        print(chunk)
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+
+    embeddings = model.encode(chunks)
+
+    print("Number of embeddings:", len(embeddings))
+    print("Dimensions:", len(embeddings[0]))
+    print("First 10 values:", embeddings[0][:10])
 
 
 if __name__ == "__main__":
